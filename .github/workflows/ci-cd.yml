@@ -1,0 +1,64 @@
+name: AI Research Gap Finder CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  test-and-lint:
+    name: Build & Smoke Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest httpx
+          pip install -r requirements.txt
+
+      - name: Lint with Flake8 (Syntax & Error check)
+        run: |
+          # Stop build if there are Python syntax errors or undefined names
+          flake8 backend --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all other errors as warnings
+          flake8 backend --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
+
+      - name: Run Backend App Health Verification
+        env:
+          GROQ_API_KEY: "mock_test_key_for_ci_build"
+          LLM_MODEL: "qwen/qwen3.8-27b"
+          ANONYMIZED_TELEMETRY: "False"
+          TOKENIZERS_PARALLELISM: "false"
+        run: |
+          python -c "from backend.api.main import app; print('FastAPI application initialized successfully for CI/CD!')"
+
+  deploy-to-render:
+    name: Trigger Render Deployment
+    needs: test-and-lint
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Render Webhook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Triggering Render zero-downtime deployment..."
+            curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+            echo "Render deployment triggered successfully!"
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret not set. Skipping webhook trigger (Render will auto-deploy on git push if connected)."
+          fi

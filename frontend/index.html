@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Gap Finder - Elite PhD-Level Academic Assistant</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- FontAwesome 6 for Professional Academic Icons (No Emojis) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <!-- Marked for Markdown Parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <link rel="stylesheet" href="/style.css?v=6.0">
+</head>
+<body>
+
+  <!-- Offline Alert Banner (Fixed Top) -->
+  <div id="offlineBanner" class="offline-banner-strip" style="display: none;">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>No internet connection detected. Please check your network connection.</span>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="brand-section">
+      <div class="brand-logo-box">
+        <i data-lucide="layers" style="width: 18px; height: 18px;"></i>
+      </div>
+      <div>
+        <div class="brand-title">ScrutinAI</div>
+        <div class="brand-subtitle">Bridge the known, discover the unknown</div>
+      </div>
+    </div>
+
+    <!-- Active Paper Pill Badge -->
+    <div class="active-paper-pill" id="activePaperPillBox">
+      <i class="fa-solid fa-file-pdf" style="font-size: 13px; color: #dc2626; flex-shrink: 0;"></i>
+      <span id="activePaperLabel" class="active-paper-name">No paper selected</span>
+    </div>
+
+    <!-- Top Right Nav User & Key Pill -->
+    <div class="nav-right-actions">
+      <button id="userProfileBtn" class="user-nav-btn" title="User Account & API Key Settings">
+        <i class="fa-solid fa-circle-user" style="font-size: 16px; color: var(--primary);"></i>
+        <span id="userEmailNav" class="user-nav-email">Sign In / Register</span>
+        <span id="apiKeyBadgeNav" class="nav-key-badge warning">
+          <i class="fa-solid fa-key" style="font-size: 10px;"></i>
+          <span>No Key</span>
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- App Layout Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar: Paper Library & Ingestion -->
+    <aside class="sidebar">
+      
+      <!-- Upload Dropzone Ingestion Box -->
+      <div>
+        <div class="sidebar-heading">Upload Paper</div>
+        <div id="dropzone" class="upload-dropzone">
+          <div class="upload-icon-circle">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 16px; color: var(--primary);"></i>
+          </div>
+          <div class="upload-dropzone-title">Upload Research PDF</div>
+          <div class="upload-dropzone-desc">Drag & drop paper or click to browse (Max 50MB)</div>
+          <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
+        </div>
+
+        <!-- Rich Upload Multi-Step Progress Indicator -->
+        <div id="uploadProgressBox" class="upload-progress-card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-primary); font-weight: 500; margin-bottom: 4px;">
+            <span id="uploadStatusLabel">Processing document...</span>
+            <span id="uploadPctLabel">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="uploadProgressBar" class="progress-bar-animated" style="width: 0%;"></div>
+          </div>
+          <div id="uploadStepSubtext" class="upload-step-subtext">Step 1/4: Reading document structure...</div>
+        </div>
+      </div>
+
+      <!-- Papers Library Section -->
+      <div style="display: flex; flex-direction: column; flex: 1; min-height: 0; margin-top: 6px;">
+        <div class="sidebar-heading">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-folder-open" style="font-size: 12px; color: var(--primary);"></i>
+            <span>Your Library (<span id="paperCountText">0</span>)</span>
+          </div>
+          <button id="refreshBtn" class="icon-action-btn" title="Refresh library">
+            <i data-lucide="rotate-cw" style="width: 13px; height: 13px;"></i>
+          </button>
+        </div>
+
+        <!-- Paper Search / Filter Box -->
+        <div class="paper-search-box">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 11px; color: var(--text-dim);"></i>
+          <input type="text" id="paperSearchInput" placeholder="Filter papers by title..." class="paper-search-input">
+        </div>
+
+        <!-- Paper List Container -->
+        <div id="paperList" class="paper-list">
+          <div style="text-align: center; padding: 28px 12px; color: var(--text-dim); font-size: 0.82rem;">
+            <i class="fa-solid fa-file-circle-plus" style="font-size: 24px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+            No papers in your workspace.<br>Upload a PDF above to begin.
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Footer -->
+      <div class="sidebar-footer">
+        <span>Papers: <strong id="statPapersCount" style="color: var(--text-primary);">0</strong></span>
+        <span>•</span>
+        <span>Chunks: <strong id="statChunksCount" style="color: var(--text-primary);">0</strong></span>
+        <span>•</span>
+        <span style="color: var(--status-high-text); font-weight: 600;">Active</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Tab Navigation Strip -->
+      <nav class="tab-navigation">
+        <button class="tab-btn active" data-tab="chat-tab">
+          <i data-lucide="message-square" style="width: 14px; height: 14px;"></i>
+          <span>Research Chat</span>
+        </button>
+        <button class="tab-btn" data-tab="summary-simple-tab">
+          <i class="fa-solid fa-user-graduate" style="font-size: 13px;"></i>
+          <span>Summary (Simple)</span>
+        </button>
+        <button class="tab-btn" data-tab="insights-tab">
+          <i data-lucide="lightbulb" style="width: 14px; height: 14px;"></i>
+          <span>Novel Insights</span>
+        </button>
+        <button class="tab-btn" data-tab="compare-tab">
+          <i data-lucide="globe" style="width: 14px; height: 14px;"></i>
+          <span>Compare Online</span>
+        </button>
+        <button class="tab-btn" data-tab="agent-discovery-tab">
+          <i class="fa-solid fa-diagram-project" style="font-size: 13px;"></i>
+          <span>Autonomous Discovery</span>
+        </button>
+        <button class="tab-btn" data-tab="export-tab">
+          <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+          <span>Export Report</span>
+        </button>
+      </nav>
+
+      <!-- =============================================================== -->
+      <!-- TAB 1: Research Chat                                            -->
+      <!-- =============================================================== -->
+      <div id="chat-tab" class="tab-pane active">
+        <div class="chat-container">
+          
+          <!-- Message Stream -->
+          <div id="chatStream" class="chat-stream">
+            <div class="chat-bubble assistant">
+              <div class="avatar">
+                <i data-lucide="bot" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="bubble-content">
+                <div class="badge-row">
+                  <span class="status-badge blue">
+                    <span class="status-dot high"></span>
+                    <span>Research Assistant</span>
+                  </span>
+                </div>
+                <div class="markdown-body">
+                  <p>Welcome to the ScrutinAI - Research Gap Finder. I assist researchers in critically analyzing papers from any scientific discipline, verifying claims against grounded passages, identifying unstated assumptions, and discovering unexplored research gaps.</p>
+                  <p style="margin-top: 6px;">Please select any paper from your library on the left or upload a new PDF to begin inquiry.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Prompt Pills -->
+          <div class="prompt-pills-row">
+            <button class="prompt-pill" data-q="What are the explicit and inferred limitations of this research?">What are the limitations?</button>
+            <button class="prompt-pill" data-q="What are the main research gaps that could be explored?">What are the research gaps?</button>
+            <button class="prompt-pill" data-q="What novel insights or patterns can you find?">What novel insights can you find?</button>
+            <button class="prompt-pill" data-q="What methodology was used in this research?">What methodology was used?</button>
+            <button class="prompt-pill" data-q="What are the key results and findings?">What are the key results?</button>
+            <button class="prompt-pill" data-q="How does this paper compare to other work in the literature?">How does this compare to other work?</button>
+          </div>
+
+          <!-- Chat Input -->
+          <form id="chatForm" style="margin-bottom: 4px;">
+            <div class="chat-input-wrapper">
+              <input type="text" id="chatInput" class="chat-input" placeholder="Ask a question about the selected paper (e.g. methodology, limitations, gaps, findings)...">
+              <button type="submit" id="sendBtn" class="btn-send" title="Send message">
+                <i data-lucide="arrow-up" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- TAB 2: Summary (Simple)                                         -->
+      <!-- =============================================================== -->
+      <div id="summary-simple-tab" class="tab-pane">
+        <div style="max-width: 860px; margin: 0 auto; width: 100%;">
+          
+          <div style="margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h2 style="font-size: 1.18rem; font-weight: 600; color: #1A1A2E; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-user-graduate" style="color: var(--primary); font-size: 16px;"></i>
+                <span>Research Summary (Simplified)</span>
+              </h2>
+              <p style="font-size: 0.82rem; color: #4B5563;">Plain-English breakdown designed for non-experts, students, and interdisciplinary researchers.</p>
+            </div>
+            <span class="status-badge blue" style="font-size: 0.76rem; padding: 4px 10px;">
+              <i class="fa-solid fa-file-lines" style="font-size: 11px;"></i>
+              <span>Plain English Mode</span>
+            </span>
+          </div>
+
+          <div id="simpleSummaryContainer">
+            <div class="empty-selection-hero">
+              <div class="empty-hero-icon">
+                <i class="fa-solid fa-book-bookmark" style="font-size: 28px; color: var(--primary);"></i>
+              </div>
+              <h3 class="empty-hero-title">Select a Paper for Summary Breakdown</h3>
+              <p class="empty-hero-desc">Click any paper from your library on the left or upload a PDF to generate a structured plain-English analysis.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- TAB 3: Novel Insights                                           -->
+      <!-- =============================================================== -->
+      <div id="insights-tab" class="tab-pane">
+        <div style="max-width: 840px; margin: 0 auto; width: 100%;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div>
+              <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--text-primary);">Novel Insights & 'New to the World' Discoveries</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Paradigm shifts, cross-domain pioneering, fundamental flaws, predictive trajectories, and unexplored combinations.</p>
+            </div>
+            <span id="domainBadge" class="status-badge blue" style="font-size: 0.76rem; padding: 4px 10px;">Domain: Detecting...</span>
+          </div>
+
+          <!-- Category Filters -->
+          <div class="category-filter-bar" id="categoryFilterBar">
+            <button class="category-filter-btn active" data-cat="all">All Discoveries (<span id="countAll">0</span>)</button>
+            <button class="category-filter-btn" data-cat="paradigm_shifts">Paradigm Shifts (<span id="countParadigm">0</span>)</button>
+            <button class="category-filter-btn" data-cat="cross_domain">Cross-Domain (<span id="countCross">0</span>)</button>
+            <button class="category-filter-btn" data-cat="reverse_engineering_flaws">Reverse Engineering (<span id="countFlaws">0</span>)</button>
+            <button class="category-filter-btn" data-cat="predictive_discoveries">Predictive (<span id="countPredict">0</span>)</button>
+            <button class="category-filter-btn" data-cat="unexplored_combinations">Unexplored Combinations (<span id="countComb">0</span>)</button>
+          </div>
+
+          <div id="insightsContainer">
+            <div class="empty-selection-hero">
+              <div class="empty-hero-icon">
+                <i class="fa-solid fa-lightbulb" style="font-size: 28px; color: var(--primary);"></i>
+              </div>
+              <h3 class="empty-hero-title">Select a Paper to Discover Novel Research Insights</h3>
+              <p class="empty-hero-desc">Choose a research document from your library to discover paradigm shifts, hidden limitations, and actionable blueprints.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- TAB 4: Compare Online                                           -->
+      <!-- =============================================================== -->
+      <div id="compare-tab" class="tab-pane">
+        <div style="max-width: 840px; margin: 0 auto; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div>
+              <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--text-primary);">Online Literature Comparison</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Search external academic repositories across arXiv, PubMed, IEEE, and Semantic Scholar for comparative coverage.</p>
+            </div>
+            <button id="searchOnlineBtn" class="btn btn-primary">
+              <i data-lucide="search" style="width: 13px; height: 13px;"></i>
+              Search Online Papers
+            </button>
+          </div>
+          <div id="compareContainer">
+            <div class="empty-selection-hero">
+              <div class="empty-hero-icon">
+                <i class="fa-solid fa-globe" style="font-size: 28px; color: var(--primary);"></i>
+              </div>
+              <h3 class="empty-hero-title">Select a Paper to Compare with Global Literature</h3>
+              <p class="empty-hero-desc">Select a paper from the library and click 'Search Online Papers' to compare its methodology against external published works.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- TAB 5: Export Report                                            -->
+      <!-- =============================================================== -->
+      <div id="export-tab" class="tab-pane">
+        <div style="max-width: 840px; margin: 0 auto; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div>
+              <h2 style="font-size: 1.15rem; font-weight: 600; color: var(--text-primary);">Export Research Report</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Download the consolidated critique, simplified summary, limitations, and gap analysis.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="downloadPdfBtn" class="btn btn-pdf" onclick="downloadReportFile('pdf')">
+                <i class="fa-solid fa-file-pdf" style="font-size: 13px;"></i>
+                Export PDF
+              </button>
+              <button id="downloadMdBtn" class="btn btn-primary" onclick="downloadReportFile('markdown')">
+                <i data-lucide="file-text" style="width: 13px; height: 13px;"></i>
+                Download Markdown
+              </button>
+            </div>
+          </div>
+          <div class="content-card" style="padding: 18px;">
+            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; color: var(--text-primary);">Report Preview</div>
+            <div id="exportPreviewBody" class="markdown-body" style="background: var(--bg-subtle); padding: 16px; border-radius: 6px; font-size: 0.86rem; max-height: 480px; overflow-y: auto;">
+              Select a paper from the sidebar to generate and preview its complete analysis report.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- TAB 6: Autonomous Multi-Agent Discovery (Interactive Flowchart)  -->
+      <!-- =============================================================== -->
+      <div id="agent-discovery-tab" class="tab-pane">
+        <div class="analysis-view-container">
+          
+          <!-- Top Executive Banner: What We Did Here & 5 AI Agent Roles -->
+          <div class="agent-unified-hero">
+            <div class="hero-header-row">
+              <div>
+                <div class="hero-badges-row">
+                  <span id="agentDomainBadge" class="hero-badge-pill blue">
+                    <i class="fa-solid fa-graduation-cap"></i> Domain: Academic Research
+                  </span>
+                  <span id="agentConfidenceBadge" class="hero-badge-pill green">
+                    <i class="fa-solid fa-shield-check"></i> <span id="heroConfidenceValue">94%</span> Verification Confidence
+                  </span>
+                  <span class="hero-badge-pill purple">
+                    <i class="fa-solid fa-users-gear"></i> 5 Specialized AI Agents Active
+                  </span>
+                </div>
+                <h2 id="heroDiscoveryTitle" class="hero-main-title">
+                  Autonomous Multi-Agent Scientific Discovery
+                </h2>
+                <p class="hero-explainer-text">
+                  5 specialized AI agents autonomously collaborate as a virtual scientific laboratory: extracting concepts, formulating novel hypotheses, challenging assumptions through adversarial peer review, self-correcting limitations, and synthesizing verified blueprints.
+                </p>
+              </div>
+
+              <div class="hero-action-box">
+                <button id="runAgentDiscoveryBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border: none; white-space: nowrap;">
+                  <i class="fa-solid fa-play" style="font-size: 11px;"></i>
+                  <span>Rerun AI Analysis</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- THE CENTERPIECE: Interactive Step-by-Step Agent Flowchart -->
+          <div class="content-card agent-flowchart-main-card">
+            <div class="flowchart-header-row">
+              <div>
+                <div class="flowchart-title">
+                  <i class="fa-solid fa-diagram-project" style="color: var(--primary);"></i>
+                  <span>AI Discovery Process</span>
+                  <span class="live-pulse-badge"><span class="pulse-ring"></span> Live Multi-Agent Execution</span>
+                </div>
+                <div class="flowchart-subtitle">
+                  5 specialized AI agents collaborate in sequence to formulate <strong>NEW discoveries beyond original paper text</strong>.
+                </div>
+              </div>
+              <div class="flowchart-actions-group">
+                <button id="simulateFlowBtn" class="btn btn-outline btn-simulate-flow" title="Play animated step-by-step reasoning simulation">
+                  <i class="fa-solid fa-play" style="color: #6366f1;"></i>
+                  <span>Simulate Flow</span>
+                </button>
+                <div class="flowchart-hint-pill">
+                  <i class="fa-solid fa-hand-pointer"></i>
+                  <span>Click cards to view reasoning</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vertical Connected Flowchart Steps Container -->
+            <div id="flowchartStepsContainer" class="agent-flowchart-stepper">
+              
+              <!-- STEP 1: CONCEPT MAPPER -->
+              <div class="flow-card mapper" id="flowcard-mapper" role="button" tabindex="0" title="Click to inspect Concept Mapper reasoning">
+                <div class="flow-card-badge-row">
+                  <div class="flow-agent-identity">
+                    <div class="flow-agent-icon mapper"><i class="fa-solid fa-book-open"></i></div>
+                    <div>
+                      <div class="flow-agent-name">1. Concept Mapper</div>
+                      <div class="flow-agent-role">Reads the paper & extracts foundational concepts</div>
+                    </div>
+                  </div>
+                  <div class="flow-step-right-group">
+                    <span id="mapperLiveBadge" class="agent-live-badge mapper"><span class="live-dot mapper"></span> Extracted</span>
+                    <span class="flow-step-num">Step 1</span>
+                  </div>
+                </div>
+                <div class="flow-card-divider"></div>
+                <div class="flow-card-output">
+                  <div class="flow-output-label"><i class="fa-solid fa-cube"></i> Foundational Entities Found:</div>
+                  <div id="flowOutputMapper" class="flow-output-text">Loading extracted paper concepts...</div>
+                </div>
+                <div class="flow-card-footer">
+                  <span class="footer-action-link"><i class="fa-solid fa-magnifying-glass"></i> View full extracted ontology & principle</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <!-- Connecting Arrow 1 -->
+              <div class="flow-arrow-connector">
+                <div class="flow-arrow-line"></div>
+                <div class="flow-arrow-icon"><i class="fa-solid fa-arrow-down"></i></div>
+              </div>
+
+              <!-- STEP 2: IDEA THEORIST -->
+              <div class="flow-card theorist" id="flowcard-theorist" role="button" tabindex="0" title="Click to inspect Idea Theorist reasoning">
+                <div class="flow-card-badge-row">
+                  <div class="flow-agent-identity">
+                    <div class="flow-agent-icon theorist"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div>
+                      <div class="flow-agent-name">2. Idea Theorist</div>
+                      <div class="flow-agent-role">Generates a NEW breakthrough idea from paper gaps</div>
+                    </div>
+                  </div>
+                  <div class="flow-step-right-group">
+                    <span id="theoristLiveBadge" class="agent-live-badge theorist"><span class="live-dot theorist"></span> Formulated</span>
+                    <span class="flow-step-num">Step 2</span>
+                  </div>
+                </div>
+                <div class="flow-card-divider"></div>
+                <div class="flow-card-output">
+                  <div class="flow-output-label"><i class="fa-solid fa-sparkles"></i> Proposed Breakthrough:</div>
+                  <div id="flowOutputTheorist" class="flow-output-text">Formulating novel breakthrough hypothesis...</div>
+                </div>
+                <div class="flow-card-footer">
+                  <span class="footer-action-link"><i class="fa-solid fa-magnifying-glass"></i> View hypothesis & core mechanism</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <!-- Connecting Arrow 2 -->
+              <div class="flow-arrow-connector">
+                <div class="flow-arrow-line"></div>
+                <div class="flow-arrow-icon"><i class="fa-solid fa-arrow-down"></i></div>
+              </div>
+
+              <!-- STEP 3: PEER REFEREE -->
+              <div class="flow-card referee" id="flowcard-referee" role="button" tabindex="0" title="Click to inspect Peer Referee reasoning">
+                <div class="flow-card-badge-row">
+                  <div class="flow-agent-identity">
+                    <div class="flow-agent-icon referee"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div>
+                      <div class="flow-agent-name">3. Peer Referee</div>
+                      <div class="flow-agent-role">Challenges the idea (adversarial review & limitations)</div>
+                    </div>
+                  </div>
+                  <div class="flow-step-right-group">
+                    <span id="refereeLiveBadge" class="agent-live-badge referee"><span class="live-dot referee"></span> Stress-Tested</span>
+                    <span class="flow-step-num">Step 3</span>
+                  </div>
+                </div>
+                <div class="flow-card-divider"></div>
+                <div class="flow-card-output">
+                  <div class="flow-output-label"><i class="fa-solid fa-triangle-exclamation"></i> Peer Challenge:</div>
+                  <div id="flowOutputReferee" class="flow-output-text">Stress-testing boundary constraints & bottlenecks...</div>
+                </div>
+                <div class="flow-card-footer">
+                  <span class="footer-action-link"><i class="fa-solid fa-magnifying-glass"></i> View peer challenge & failure points</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <!-- Connecting Arrow 3 -->
+              <div class="flow-arrow-connector">
+                <div class="flow-arrow-line"></div>
+                <div class="flow-arrow-icon"><i class="fa-solid fa-arrow-down"></i></div>
+              </div>
+
+              <!-- STEP 4: SELF-CORRECTION LEAD -->
+              <div class="flow-card refiner" id="flowcard-refiner" role="button" tabindex="0" title="Click to inspect Self-Correction reasoning">
+                <div class="flow-card-badge-row">
+                  <div class="flow-agent-identity">
+                    <div class="flow-agent-icon refiner"><i class="fa-solid fa-wrench"></i></div>
+                    <div>
+                      <div class="flow-agent-name">4. Self-Correction Lead</div>
+                      <div class="flow-agent-role">Fixes the flaws & adds robust defensive safeguards</div>
+                    </div>
+                  </div>
+                  <div class="flow-step-right-group">
+                    <span id="refinerLiveBadge" class="agent-live-badge refiner"><span class="live-dot refiner"></span> Safeguarded</span>
+                    <span class="flow-step-num">Step 4</span>
+                  </div>
+                </div>
+                <div class="flow-card-divider"></div>
+                <div class="flow-card-output">
+                  <div class="flow-output-label"><i class="fa-solid fa-shield-check"></i> Objection Resolved:</div>
+                  <div id="flowOutputRefiner" class="flow-output-text">Applying corrective calibration & defensive bounds...</div>
+                </div>
+                <div class="flow-card-footer">
+                  <span class="footer-action-link"><i class="fa-solid fa-magnifying-glass"></i> View self-correction & hardened model</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <!-- Connecting Arrow 4 -->
+              <div class="flow-arrow-connector">
+                <div class="flow-arrow-line"></div>
+                <div class="flow-arrow-icon"><i class="fa-solid fa-arrow-down"></i></div>
+              </div>
+
+              <!-- STEP 5: BLUEPRINT LEAD -->
+              <div class="flow-card architect" id="flowcard-architect" role="button" tabindex="0" title="Click to inspect Blueprint Lead reasoning">
+                <div class="flow-card-badge-row">
+                  <div class="flow-agent-identity">
+                    <div class="flow-agent-icon architect"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <div>
+                      <div class="flow-agent-name">5. Blueprint Lead</div>
+                      <div class="flow-agent-role">Validates & creates 3-phase testing roadmap</div>
+                    </div>
+                  </div>
+                  <div class="flow-step-right-group">
+                    <span id="architectLiveBadge" class="agent-live-badge architect"><span class="live-dot architect"></span> Validated</span>
+                    <span class="flow-step-num">Step 5</span>
+                  </div>
+                </div>
+                <div class="flow-card-divider"></div>
+                <div class="flow-card-output">
+                  <div class="flow-output-label"><i class="fa-solid fa-list-check"></i> Verification & Roadmap:</div>
+                  <div id="flowOutputArchitect" class="flow-output-text">Synthesizing validated research roadmap...</div>
+                </div>
+                <div class="flow-card-footer">
+                  <span class="footer-action-link"><i class="fa-solid fa-magnifying-glass"></i> View testing protocol & metrics</span>
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <!-- Final Golden Connecting Arrow -->
+              <div class="flow-arrow-connector gold">
+                <div class="flow-arrow-line gold"></div>
+                <div class="flow-arrow-icon gold"><i class="fa-solid fa-trophy"></i></div>
+              </div>
+
+              <!-- FINAL BREAKTHROUGH DISCOVERY CARD -->
+              <div class="flow-card discovery-highlight" id="flowcard-discovery" role="button" tabindex="0" title="Click to inspect Final Discovery Details">
+                <div class="discovery-card-top-row">
+                  <div class="discovery-header-badge">
+                    <i class="fa-solid fa-award"></i>
+                    <span>Verified Scientific Discovery</span>
+                  </div>
+                  <span id="flowDiscoveryConfidenceBadge" class="falsification-score-badge">
+                    <i class="fa-solid fa-shield-check"></i> <span id="flowConfidenceValue">94%</span> Verified Quality
+                  </span>
+                </div>
+                
+                <h3 id="flowDiscoveryTitle" class="discovery-card-title">
+                  Claim-Level Causal Provenance in Multi-Agent Systems
+                </h3>
+
+                <div class="discovery-card-body-grid">
+                  <div class="discovery-detail-item">
+                    <strong class="discovery-item-heading"><i class="fa-solid fa-atom"></i> What It Is:</strong>
+                    <p id="flowDiscoveryWhat" class="discovery-item-text">Loading verified breakthrough synthesis...</p>
+                  </div>
+                  <div class="discovery-detail-item">
+                    <strong class="discovery-item-heading"><i class="fa-solid fa-chart-line-up"></i> Why It's Novel:</strong>
+                    <p id="flowDiscoveryWhy" class="discovery-item-text">Loading novelty explanation...</p>
+                  </div>
+                </div>
+
+                <div class="discovery-card-action-bar">
+                  <span class="discovery-action-text"><i class="fa-solid fa-flask"></i> 3-Phase Testing Protocol Ready</span>
+                  <span class="discovery-click-pill"><i class="fa-solid fa-expand"></i> Click for Full Details & Testing Roadmap</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Core Paper Principle Banner -->
+            <div id="ontologyAxiomTag" class="paper-axiom-box" style="margin-top: 16px;">
+              <i class="fa-solid fa-quote-left" style="color: #16a34a; font-size: 13px; margin-right: 6px;"></i>
+              <strong>Core Paper Principle:</strong> <span id="axiomText">Extracting fundamental principle...</span>
+            </div>
+          </div>
+
+          <!-- Bottom Split Grid: AI Scientist Debate Stream + Actionable 3-Step Testing Roadmap -->
+          <div class="galaxy-bottom-split-grid">
+            
+            <!-- Left: Multi-Agent Scientific Debate Stream -->
+            <div class="content-card" style="padding: 16px 18px;">
+              <div class="bottom-section-header">
+                <div class="bottom-section-title">
+                  <i class="fa-solid fa-comments" style="color: #8b5cf6;"></i>
+                  <span>AI Scientist Debate Stream</span>
+                </div>
+                <button id="replayTheaterBtn" class="btn-canvas-action" title="Replay Debate">
+                  <i class="fa-solid fa-play"></i> Replay Debate
+                </button>
+              </div>
+              <div id="agentTranscriptContainer" class="theater-chat-stream">
+                <!-- Stream of multi-agent messages -->
+              </div>
+            </div>
+
+            <!-- Right: Actionable 3-Step Testing Protocol & Real-World Impact -->
+            <div class="content-card" style="padding: 16px 18px;">
+              <div class="bottom-section-header">
+                <div class="bottom-section-title">
+                  <i class="fa-solid fa-flask-vial" style="color: #0ea5e9;"></i>
+                  <span>Actionable 3-Step Testing Protocol</span>
+                </div>
+                <span id="cardConfidenceTag" class="falsification-score-badge">
+                  <i class="fa-solid fa-shield-check"></i> <span id="labConfidenceValue">94%</span> Verified Quality
+                </span>
+              </div>
+
+              <div id="verifiedDiscoveryContainer" class="verified-discovery-wrapper">
+                <!-- Dynamically populated 3-phase lab blueprint -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div id="toastBox" class="toast-container"></div>
+
+  <!-- =============================================================== -->
+  <!-- MODAL 1: Real User Authentication (Sign In & Register & Google) -->
+  <!-- =============================================================== -->
+  <div id="authModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card auth-modal-card">
+      <div class="auth-header">
+        <div class="auth-icon-badge">
+          <i class="fa-solid fa-user-shield" style="font-size: 22px; color: var(--primary);"></i>
+        </div>
+        <h3 class="auth-title">AI Research Gap Finder</h3>
+        <p class="auth-subtitle">Sign in to your private academic workspace with isolated paper library and analysis.</p>
+      </div>
+
+      <!-- Auth Sub-Tabs: Sign In vs Register -->
+      <div class="auth-nav-tabs">
+        <button type="button" id="tabSignInBtn" class="auth-nav-tab active">Sign In</button>
+        <button type="button" id="tabRegisterBtn" class="auth-nav-tab">Create Account</button>
+      </div>
+
+      <!-- 1. Sign In Tab Content -->
+      <div id="signInFormSection">
+        <!-- Google Sign In Button -->
+        <button type="button" id="googleSignInBtn" class="btn btn-google btn-block" style="margin-bottom: 16px;">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Sign In with Google</span>
+        </button>
+
+        <div class="auth-divider">
+          <span>or sign in with email</span>
+        </div>
+
+        <form id="signInForm">
+          <div class="form-group">
+            <label for="loginEmailInput" class="form-label">Email Address</label>
+            <input type="email" id="loginEmailInput" class="form-input" placeholder="researcher@university.edu" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPasswordInput" class="form-label">Password</label>
+            <div class="input-with-action">
+              <input type="password" id="loginPasswordInput" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+              <button type="button" class="btn-input-action toggle-pwd-btn" data-target="loginPasswordInput">
+                <i class="fa-solid fa-eye" style="font-size: 12px;"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" id="submitLoginBtn" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-right-to-bracket" style="font-size: 13px;"></i>
+            <span>Sign In</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- 2. Create Account Tab Content -->
+      <div id="registerFormSection" style="display: none;">
+        <button type="button" id="googleSignUpBtn" class="btn btn-google btn-block" style="margin-bottom: 16px;">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Sign Up with Google</span>
+        </button>
+
+        <div class="auth-divider">
+          <span>or create with email</span>
+        </div>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="regNameInput" class="form-label">Full Name</label>
+            <input type="text" id="regNameInput" class="form-input" placeholder="Dr. Alex Rivera" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="regEmailInput" class="form-label">Email Address</label>
+            <input type="email" id="regEmailInput" class="form-input" placeholder="alex@university.edu" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="regPasswordInput" class="form-label">Password (Min. 6 characters)</label>
+            <div class="input-with-action">
+              <input type="password" id="regPasswordInput" class="form-input" placeholder="••••••••" minlength="6" required autocomplete="new-password">
+              <button type="button" class="btn-input-action toggle-pwd-btn" data-target="regPasswordInput">
+                <i class="fa-solid fa-eye" style="font-size: 12px;"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" id="submitRegisterBtn" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-user-plus" style="font-size: 13px;"></i>
+            <span>Create Account</span>
+          </button>
+        </form>
+      </div>
+
+      <div style="text-align: center; margin-top: 14px;">
+        <button type="button" id="closeAuthModalBtn" class="link-btn" style="font-size: 0.78rem; color: var(--text-muted);">
+          Continue as Guest
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!-- MODAL 2: Groq API Key Setup & Guide                              -->
+  <!-- =============================================================== -->
+  <div id="apiKeyModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card auth-modal-card">
+      <div class="auth-header">
+        <div class="auth-icon-badge" style="background: #fef3c7; color: #b45309;">
+          <i class="fa-solid fa-key" style="font-size: 20px;"></i>
+        </div>
+        <h3 class="auth-title">Configure Your Groq API Key</h3>
+        <p class="auth-subtitle">Provide your own Groq API key to power all multi-model LLM analyses under your own free tier quota.</p>
+      </div>
+
+      <form id="apiKeyForm">
+        <div class="form-group">
+          <label for="groqApiKeyInput" class="form-label">Groq API Key</label>
+          <div class="input-with-action">
+            <input type="password" id="groqApiKeyInput" class="form-input" placeholder="gsk_..." required autocomplete="off">
+            <button type="button" id="toggleKeyVisibilityBtn" class="btn-input-action" title="Toggle visibility">
+              <i class="fa-solid fa-eye" style="font-size: 12px;"></i>
+            </button>
+          </div>
+          <div id="apiKeyStatusMsg" style="font-size: 0.78rem; margin-top: 6px; display: none;"></div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <button type="submit" id="saveApiKeyBtn" class="btn btn-primary" style="flex: 1;">
+            <i class="fa-solid fa-check" style="font-size: 12px;"></i>
+            <span>Verify & Save Key</span>
+          </button>
+          <button type="button" id="closeApiKeyModalBtn" class="btn btn-subtle">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <!-- Step by Step Free Key Guide -->
+      <div class="groq-guide-box">
+        <div class="groq-guide-title">
+          <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i>
+          <span>How to get a FREE Groq API key:</span>
+        </div>
+        <ol class="groq-guide-steps">
+          <li>Visit <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer">console.groq.com</a> and sign up for a free account.</li>
+          <li>Navigate to <strong>API Keys</strong> in the sidebar.</li>
+          <li>Click <strong>Create API Key</strong> and copy the generated key.</li>
+          <li>Paste the key into the field above and click <strong>Verify & Save Key</strong>.</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!-- MODAL 3: User Settings & Account Details                         -->
+  <!-- =============================================================== -->
+  <div id="userSettingsModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-sliders" style="color: var(--primary);"></i>
+          <span>Account & Workspace Settings</span>
+        </h3>
+        <button id="closeUserSettingsBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="Close">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-row">
+          <span class="settings-label">Active User:</span>
+          <span id="settingsUserEmail" class="settings-val">user@example.com</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Workspace Isolation:</span>
+          <span class="status-badge green" style="padding: 2px 8px; font-size: 0.72rem;">Private Scoped</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Groq API Key:</span>
+          <span id="settingsKeyMask" class="settings-val monospace">gsk_...none</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Session Duration:</span>
+          <span class="settings-val">7 Days Persistent</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px;">
+        <button id="settingsChangeKeyBtn" class="btn btn-subtle" style="justify-content: center;">
+          <i class="fa-solid fa-key" style="font-size: 12px;"></i>
+          <span>Update / Change Groq API Key</span>
+        </button>
+        <button id="settingsOpenFaqBtn" class="btn btn-subtle" style="justify-content: center;">
+          <i class="fa-solid fa-book-open" style="font-size: 12px;"></i>
+          <span>Documentation & FAQ</span>
+        </button>
+        <button id="settingsLogoutBtn" class="btn btn-danger" style="justify-content: center; margin-top: 6px;">
+          <i class="fa-solid fa-right-from-bracket" style="font-size: 12px;"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!-- MODAL 4: Documentation & FAQ                                    -->
+  <!-- =============================================================== -->
+  <div id="faqModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 600px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-book-open" style="color: var(--primary);"></i>
+          <span>Documentation & FAQ</span>
+        </h3>
+        <button id="closeFaqBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="Close">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <div class="faq-q">How does AI Research Gap Finder work?</div>
+          <div class="faq-a">The system uses high-density PDF parsing and vector embeddings in ChromaDB with hybrid retrieval. Multi-layer RAG cross-references explicit claims against page numbers and detects research opportunities.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Why do I need to enter my own Groq API key?</div>
+          <div class="faq-a">Using your own free Groq API key prevents rate limiting and ensures unlimited access across high-speed models (e.g. LLaMA 3.3 70B, Mixtral 8x7B) without consuming shared system credits.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is my research data and API key secure?</div>
+          <div class="faq-a">Yes. Your API key and uploaded papers are stored securely in your private workspace and are never shared, logged, or visible to other users.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evidence Inspector Modal -->
+  <div id="evidenceModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 id="modalTitle" style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Source Passage</h3>
+        <button id="modalCloseBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer;" title="Close">
+          <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+      <div id="modalBody" style="background: var(--bg-subtle); padding: 12px; border-radius: 6px; font-size: 0.84rem; line-height: 1.65; color: var(--text-secondary);"></div>
+    </div>
+  </div>
+
+  <!-- =============================================================== -->
+  <!-- MODAL 5: AI Agent Reasoning & Discovery Details Modal           -->
+  <!-- =============================================================== -->
+  <div id="discoveryReasoningModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card reasoning-modal-card">
+      <div class="reasoning-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="reasoningModalIcon" class="reasoning-modal-icon-badge mapper">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div>
+            <h3 id="reasoningModalTitle" class="reasoning-modal-title">Concept Mapper Reasoning</h3>
+            <div id="reasoningModalSubtitle" class="reasoning-modal-subtitle">Reads the paper and extracts core concepts</div>
+          </div>
+        </div>
+        <button id="closeReasoningModalBtn" class="reasoning-modal-close" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="reasoningModalBody" class="reasoning-modal-body">
+        <!-- Dynamically injected structured reasoning content -->
+      </div>
+
+      <div class="reasoning-modal-footer">
+        <button id="closeReasoningModalBtnBottom" class="btn btn-primary" style="margin-left: auto;">
+          <span>Done / Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js?v=6.0"></script>
+</body>
+</html>
