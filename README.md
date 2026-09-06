@@ -62,77 +62,77 @@ flowchart TB
     
 ## 🔍 How the App Works (Simple Explanation)
 
-1. Upload Your Paper
-Start by uploading any research paper in PDF format. The app reads the entire paper and splits it into small, meaningful chunks. Each chunk is converted into a mathematical representation (called a vector) so the system can understand and search through the content intelligently.
+ **1. Upload Your Paper**
+- Start by uploading any research paper in PDF format. The app reads the entire paper and splits it into small, meaningful chunks. Each chunk is - converted into a mathematical representation (called a vector) so the system can understand and search through the content intelligently.
 
-2. Ask Questions & Get Answers
-You can ask any question about the paper, like:
+**2. Ask Questions & Get Answers**
+- You can ask any question about the paper, like:
 
-"What are the limitations of this research?"
+- "What are the limitations of this research?"
 
-"What methodology was used?"
+- "What methodology was used?"
 
-"What are the research gaps?"
+- "What are the research gaps?"
 
-The app searches through the paper, finds the most relevant sections, and gives you an answer with:
+- The app searches through the paper, finds the most relevant sections, and gives you an answer with:
 
-Confidence Score: Shows how confident the answer is (High/Medium/Low)
+- Confidence Score: Shows how confident the answer is (High/Medium/Low)
 
-Page Citations: Exactly which page the information came from
+- Page Citations: Exactly which page the information came from
 
-Source Text: The actual quote from the paper
+- Source Text: The actual quote from the paper
 
-3. Discover Research Gaps & Limitations
-The app automatically finds:
+**3. Discover Research Gaps & Limitations**
+- The app automatically finds:
 
-Explicit Limitations – What the authors themselves admit (with direct quotes and page numbers)
+- Explicit Limitations – What the authors themselves admit (with direct quotes and page numbers)
 
-Inferred Limitations – What the system logically deduces from the methodology, dataset, or experiments
+- Inferred Limitations – What the system logically deduces from the methodology, dataset, or experiments
 
-Research Gaps – What's missing from the paper, categorized as High/Medium/Low priority
+- Research Gaps – What's missing from the paper, categorized as High/Medium/Low priority
 
-Actionable Improvements – Specific suggestions on what to change and why
+- Actionable Improvements – Specific suggestions on what to change and why
 
-4. 5-Agent Discovery (The AI Scientist Team)
-This is where the magic happens. The app creates a virtual team of 5 AI agents that work together:
+**4. 5-Agent Discovery (The AI Scientist Team)**
+- This is where the magic happens. The app creates a virtual team of 5 AI agents that work together:
 
-Agent	Role
-Concept Mapper	Reads the paper and extracts core concepts and ideas
-Idea Theorist	Generates a completely new breakthrough idea
-Peer Referee	Challenges the idea, finds flaws and edge cases
-Self-Correction Lead	Fixes the flaws and strengthens the idea
-Blueprint Lead	Creates a step-by-step testing roadmap
-The result? A completely new discovery that is NOT mentioned anywhere in the original paper!
+- Agent	Role
+- Concept Mapper	Reads the paper and extracts core concepts and ideas
+- Idea Theorist	Generates a completely new breakthrough idea
+- Peer Referee	Challenges the idea, finds flaws and edge cases
+- Self-Correction Lead	Fixes the flaws and strengthens the idea
+- Blueprint Lead	Creates a step-by-step testing roadmap
+- The result? A completely new discovery that is NOT mentioned anywhere in the original paper!
 
-5. Live Literature Comparison
-The app searches online (arXiv, PubMed, IEEE, Semantic Scholar) for similar research papers. It shows you:
+**5. Live Literature Comparison**
+- The app searches online (arXiv, PubMed, IEEE, Semantic Scholar) for similar research papers. It shows you:
 
-What similar papers exist
+- What similar papers exist
 
-What they cover that your paper doesn't
+- What they cover that your paper doesn't
 
-How your paper compares to the broader research landscape
+- How your paper compares to the broader research landscape
 
-6. Export Reports
-Once you're done analyzing, you can download everything as:
+**6. Export Reports**
+- Once you're done analyzing, you can download everything as:
 
-PDF Report – A complete, well-formatted document
+- PDF Report – A complete, well-formatted document
 
-Markdown Report – For editing or sharing on platforms like GitHub
+- Markdown Report – For editing or sharing on platforms like GitHub
 
-7. Plain-English Summary
-If you're not a subject matter expert, the app can translate the entire analysis into simple, easy-to-understand language. Perfect for students, non-experts, or anyone who wants a quick overview.
+**7. Plain-English Summary**
+- If you're not a subject matter expert, the app can translate the entire analysis into simple, easy-to-understand language. Perfect for students, non-experts, or anyone who wants a quick overview.
 
-8. 'New to the World' Discoveries
-The system goes beyond what's in the paper and finds:
+**8. 'New to the World' Discoveries**
+- The system goes beyond what's in the paper and finds:
 
-Paradigm Shifts – Completely new ways to approach the problem
+- Paradigm Shifts – Completely new ways to approach the problem
 
-Cross-Domain Connections – Applying ideas from one field to another
+- Cross-Domain Connections – Applying ideas from one field to another
 
-Hidden Flaws – Things the authors might have missed
+- Hidden Flaws – Things the authors might have missed
 
-Unexplored Combinations – Ideas that have never been combined before
+- Unexplored Combinations – Ideas that have never been combined before
 
 ### 🚀 Quick Start (Local Setup)
 1. Clone the Repository
