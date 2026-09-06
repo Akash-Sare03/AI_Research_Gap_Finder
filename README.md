@@ -5,7 +5,6 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![Groq API](https://img.shields.io/badge/Groq-Fast%20Inference-f55036.svg)](https://groq.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange.svg)](https://www.trychroma.com)
-## [![Deploy on Render](https://img.shields.io/badge/Render-Live%20Deploy-46E3B7.svg)](https://render.com)
 
 > **Bridge the known, discover the unknown.**  
 > ScrutinAI is an AI-powered academic research assistant and multi-agent scientific discovery platform. Upload any research paper (PDF) to instantly discover unexplored research gaps, detect hidden assumptions, chat with exact source citations, compare with online literature, and run an autonomous 5-agent scientific debate that formulates new breakthrough hypotheses.
