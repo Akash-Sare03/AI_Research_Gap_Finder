@@ -1,230 +1,185 @@
-# AI Research Gap Finder & Autonomous Discovery
+# ScrutinAI — AI Research Gap Finder
 
-[![CI/CD Pipeline](https://github.com/your-username/AI_Research_Gap_Finder/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/your-username/AI_Research_Gap_Finder/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
-[![Groq API](https://img.shields.io/badge/Groq-Ultra--Fast%20Inference-f55036.svg)](https://groq.com)
+[![Groq API](https://img.shields.io/badge/Groq-Fast%20Inference-f55036.svg)](https://groq.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange.svg)](https://www.trychroma.com)
+[![Deploy on Render](https://img.shields.io/badge/Render-Live%20Deploy-46E3B7.svg)](https://render.com)
 
-An AI-powered Academic Research Assistant and Multi-Agent Scientific Discovery platform. Upload any research paper (PDF) to instantly extract research gaps, run grounded RAG question-answering, explore interactive 60 FPS knowledge galaxies, and execute a 5-agent autonomous discovery pipeline with live debate and self-correction.
+> **Bridge the known, discover the unknown.**  
+> ScrutinAI is an AI-powered academic research assistant and multi-agent scientific discovery platform. Upload any research paper (PDF) to instantly discover unexplored research gaps, detect hidden assumptions, chat with exact source citations, compare with online literature, and run an autonomous 5-agent scientific debate that formulates new breakthrough hypotheses.
 
 ---
 
 ## 🌟 Key Features
 
-### 1. 🤖 5-Agent Autonomous Scientific Discovery
-A multi-agent Actor-Critic orchestration engine that works through five distinct specialized stages:
-1. **Concept Mapper**: Extracts semantic entities, foundational axioms, and relationship links from the paper text.
-2. **Idea Theorist**: Formulates radical, new-to-the-world scientific breakthrough hypotheses not found in the original paper.
-3. **Peer Referee**: Acts as an adversarial reviewer to challenge the hypothesis, stress-testing boundary conditions and failure modes.
-4. **Self-Correction Lead**: Refines the breakthrough to resolve all objections with defensive constraints and mathematical rigor.
-5. **Blueprint Architect**: Creates a verified 3-phase testing roadmap with actionable experiments, metrics, and falsification confidence scoring.
-
-### 2. 🌌 Interactive Knowledge Galaxy (60 FPS Simulation)
-- Dynamic Canvas galaxy connecting base paper concepts with AI-discovered breakthrough nodes.
-- Animated laser energy beams showing the real-time reasoning flow between agents.
-- Interactive step cards with click-to-open modals for in-depth reasoning, mathematical formulations, and validation protocols.
-
-### 3. 🔍 9-Section Academic Research Gap Analysis
-Automatically breaks down any research paper into:
-- Executive Summary & Problem Formulation
-- Core Contributions & Novelty Assessment
-- Methodological Limitations & Assumptions
-- Unexplored Edge Cases & Negative Constraints
-- 5 Concrete Research Gaps with Proposed Future Solutions
-
-### 4. 💬 Grounded RAG Question Answering
-- Chat with your research paper with zero hallucination.
-- Every claim is cited directly with exact source snippets and page/chunk references.
-- Pre-built quick prompt suggestions for common questions.
-
-### 5. 🌐 Online Literature Comparison
-- Searches external databases to find related academic papers.
-- Generates side-by-side comparative reviews and positioning analysis.
-
-### 6. 📄 1-Click Multi-Format Report Export
-- Download comprehensive research gap reports in **PDF**, **Markdown**, or **JSON** format.
-
-### 7. 🔒 Secure Authentication & Free Guest Trials
-- **12 Free Guest Preview Trials** out-of-the-box using the built-in system key.
-- Google OAuth & Email authentication.
-- Scoped user workspace isolation (your uploaded papers remain private to your account).
-- Bring-Your-Own-Key support for unlimited PhD-level research using free Groq API keys.
+| Feature | Description |
+| :--- | :--- |
+| 🤖 **5-Agent Autonomous Discovery** | A virtual scientific lab where 5 AI agents (**Concept Mapper**, **Idea Theorist**, **Peer Referee**, **Self-Correction Lead**, and **Blueprint Architect**) debate, challenge, and refine new breakthrough hypotheses beyond the original paper. |
+| 🔍 **Academic Critique & Gap Finding** | Automatically extracts **explicit limitations** (with author quotes and page numbers), **inferred methodological flaws**, **prioritized research gaps** (High/Med/Low), and **actionable improvements**. |
+| 🎓 **Plain-English Summary** | Translates dense academic jargon into clear, simple language with problem breakdowns and real-world takeaways for students and non-experts. |
+| 💡 **'New to the World' Discoveries** | Discovers paradigm shifts, cross-domain transfers (e.g. biology to AI), structural flaws, and unexplored technical combinations across any scientific domain. |
+| 🌐 **Live Literature Comparison** | Searches scholarly repositories (**arXiv, PubMed, IEEE, Semantic Scholar**) with strict noise filters to show what external literature covers that the uploaded paper missed. |
+| 💬 **Grounded RAG Chat** | Ask any question about your papers. Answers are retrieved via **Hybrid Search (Vector + BM25)** with exact quote snippets, chunk IDs, and page numbers. |
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 🏗️ Architecture & Workflow
 
-```
-AI_Research_Gap_Finder/
-├── backend/
-│   ├── api/             # FastAPI REST endpoints & route handlers
-│   ├── core/            # Authentication, JWT, Quota tracker, Config, LLM service
-│   ├── document/        # PDF extraction, cleaning & recursive chunking
-│   ├── vectorstore/     # ChromaDB vector store & hybrid search
-│   ├── analysis/        # Autonomous discovery engine, novelty auditor, metrics extractor
-│   └── services/        # Orchestration layer for research workflows
-├── frontend/
-│   ├── index.html       # Single-page modern application UI
-│   ├── style.css        # Academic dark-theme UI with 60 FPS animations
-│   └── app.js           # Vanilla JS controller (Zero build step needed)
-├── .github/workflows/   # Automated CI/CD GitHub Actions pipeline
-├── render.yaml          # Render Blueprint deployment configuration
-├── requirements.txt     # Python production dependencies
-└── run_app.py           # Single-command launcher for local & cloud servers
-```
+```mermaid
+flowchart TB
+    subgraph INPUT["📄 INPUT"]
+        A[Upload PDF] --> B[SHA-256]
+        B --> C[PyPDF Extract]
+        C --> D[Chunking 512/50]
+    end
 
-- **Backend**: FastAPI, Uvicorn, LangChain, Groq API (`qwen/qwen3.8-27b`), ChromaDB, HuggingFace Sentence-Transformers (`all-MiniLM-L6-v2`), ReportLab.
-- **Frontend**: Modern Vanilla HTML5, CSS3 Glassmorphism, FontAwesome 6, Canvas 2D.
-- **Deployment**: Render, Docker-ready, GitHub Actions CI/CD.
+    subgraph CORE["⚙️ CORE"]
+        D --> E[Embeddings]
+        E --> F[(ChromaDB)]
+    end
+
+    subgraph OUTPUT["📊 OUTPUT"]
+        F --> G[💬 Chat]
+        F --> H[🤖 5-Agent]
+        F --> I[📋 Summary]
+        F --> J[💡 Novel Insights]
+        F --> K[🌐 Compare Online]
+        
+        G --> L[📥 Export]
+        H --> L
+        I --> L
+        J --> L
+        K --> L
+        
+        L --> M[PDF]
+        L --> N[Markdown]
+    end
+```
 
 ---
+    
+## 🔍 How the App Works (Simple Explanation)
 
-## 🚀 Quick Start Guide (Local Setup)
+1. Upload Your Paper
+Start by uploading any research paper in PDF format. The app reads the entire paper and splits it into small, meaningful chunks. Each chunk is converted into a mathematical representation (called a vector) so the system can understand and search through the content intelligently.
 
-### Prerequisites
-- Python 3.11+ installed ([Download Python](https://www.python.org/downloads/))
-- Free Groq API Key ([Get a free key at console.groq.com](https://console.groq.com))
-- Git installed ([Download Git](https://git-scm.com/))
+2. Ask Questions & Get Answers
+You can ask any question about the paper, like:
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/AI_Research_Gap_Finder.git
+"What are the limitations of this research?"
+
+"What methodology was used?"
+
+"What are the research gaps?"
+
+The app searches through the paper, finds the most relevant sections, and gives you an answer with:
+
+Confidence Score: Shows how confident the answer is (High/Medium/Low)
+
+Page Citations: Exactly which page the information came from
+
+Source Text: The actual quote from the paper
+
+3. Discover Research Gaps & Limitations
+The app automatically finds:
+
+Explicit Limitations – What the authors themselves admit (with direct quotes and page numbers)
+
+Inferred Limitations – What the system logically deduces from the methodology, dataset, or experiments
+
+Research Gaps – What's missing from the paper, categorized as High/Medium/Low priority
+
+Actionable Improvements – Specific suggestions on what to change and why
+
+4. 5-Agent Discovery (The AI Scientist Team)
+This is where the magic happens. The app creates a virtual team of 5 AI agents that work together:
+
+Agent	Role
+Concept Mapper	Reads the paper and extracts core concepts and ideas
+Idea Theorist	Generates a completely new breakthrough idea
+Peer Referee	Challenges the idea, finds flaws and edge cases
+Self-Correction Lead	Fixes the flaws and strengthens the idea
+Blueprint Lead	Creates a step-by-step testing roadmap
+The result? A completely new discovery that is NOT mentioned anywhere in the original paper!
+
+5. Live Literature Comparison
+The app searches online (arXiv, PubMed, IEEE, Semantic Scholar) for similar research papers. It shows you:
+
+What similar papers exist
+
+What they cover that your paper doesn't
+
+How your paper compares to the broader research landscape
+
+6. Export Reports
+Once you're done analyzing, you can download everything as:
+
+PDF Report – A complete, well-formatted document
+
+Markdown Report – For editing or sharing on platforms like GitHub
+
+7. Plain-English Summary
+If you're not a subject matter expert, the app can translate the entire analysis into simple, easy-to-understand language. Perfect for students, non-experts, or anyone who wants a quick overview.
+
+8. 'New to the World' Discoveries
+The system goes beyond what's in the paper and finds:
+
+Paradigm Shifts – Completely new ways to approach the problem
+
+Cross-Domain Connections – Applying ideas from one field to another
+
+Hidden Flaws – Things the authors might have missed
+
+Unexplored Combinations – Ideas that have never been combined before
+
+### 🚀 Quick Start (Local Setup)
+1. Clone the Repository
+bash
+git clone https://github.com/Akash-Sare03/AI_Research_Gap_Finder.git
 cd AI_Research_Gap_Finder
+2. Create Virtual Environment & Install Dependencies
 ```
-
-### 2. Create and Activate Virtual Environment
-- **Windows (PowerShell)**:
-  ```powershell
-  python -m venv venv
-  .\venv\Scripts\Activate.ps1
-  ```
-- **macOS / Linux**:
-  ```bash
-  python3 -m venv venv
-  source venv/bin/activate
-  ```
-
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment Variables
-Create a `.env` file in the root directory (or copy from `.env.example`):
-```bash
 # Windows
-copy .env.example .env
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 
 # macOS / Linux
-cp .env.example .env
-```
+python3 -m venv venv
+source venv/bin/activate
 
-Open `.env` and paste your Groq API key:
-```env
+# Install requirements
+pip install -r requirements.txt
+3. Configure API Key
+Create a .env file from the example:
+
+cp .env.example .env     # On Windows: copy .env.example .env
+Add your free Groq API Key:
+
+env
 GROQ_API_KEY=gsk_your_groq_api_key_here
 LLM_MODEL=qwen/qwen3.8-27b
-```
+4. Run the Application
 
-### 5. Launch the Application
-```bash
 python run_app.py
+Open your browser at:
 ```
 
-Open your browser and navigate to:
-👉 **`http://localhost:8000`** (or **`http://127.0.0.1:8000`**)
-Interactive API Swagger Docs: **`http://localhost:8000/docs`**
+💻 Web App: http://localhost:8000
 
----
+📖 Interactive API Docs: http://localhost:8000/docs
 
-## 🌐 Step-by-Step Render Cloud Deployment Guide
+## 🛠️ Tech Stack
+Backend: FastAPI, Uvicorn, LangChain, LangGraph, Pydantic
 
-You can deploy this application for free on [Render](https://render.com) in under 5 minutes:
+Inference & AI: Groq API (qwen/qwen3.8-27b, openai/gpt-oss-120b)
 
-### Step 1: Push Your Code to GitHub
-1. Create a new repository on [GitHub](https://github.com/new) (e.g., `AI_Research_Gap_Finder`).
-2. Push your local files to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: AI Research Gap Finder with Autonomous Multi-Agent Discovery"
-   git branch -M main
-   git remote add origin https://github.com/your-username/AI_Research_Gap_Finder.git
-   git push -u origin main
-   ```
+Embeddings & Search: HuggingFace sentence-transformers/all-MiniLM-L6-v2, ChromaDB, BM25Okapi
 
-### Step 2: Create a Web Service on Render
-1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** ➔ **Web Service**.
-2. Connect your GitHub repository: `AI_Research_Gap_Finder`.
-3. Configure the service settings:
-   - **Name**: `ai-research-gap-finder`
-   - **Environment**: `Python`
-   - **Region**: `Oregon (US West)` (or closest to you)
-   - **Branch**: `main`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `python run_app.py`
-   - **Instance Type**: `Free`
+PDF & Export: PyPDF, ReportLab (with clean typography sanitization)
 
-### Step 3: Add Environment Variables in Render
-In the **Environment Variables** tab of your Render service, add:
-| Key | Value | Description |
-| :--- | :--- | :--- |
-| `GROQ_API_KEY` | `gsk_...` | Your Groq API key from console.groq.com |
-| `LLM_MODEL` | `qwen/qwen3.8-27b` | Recommended fast inference model |
-| `PYTHON_VERSION` | `3.11.9` | Python runtime version |
-| `TOKENIZERS_PARALLELISM` | `false` | Prevents sub-process deadlocks |
-| `ANONYMIZED_TELEMETRY` | `False` | Disables telemetry overhead |
-
-### Step 4: Deploy & Access Live URL
-Click **Create Web Service**. Render will automatically build and deploy your application. Within 2-3 minutes, your live URL will be active:
-👉 `https://ai-research-gap-finder.onrender.com`
-
----
-
-## 🔄 CI/CD Pipeline with GitHub Actions
-
-This repository includes a `.github/workflows/ci-cd.yml` workflow:
-
-1. **Automated Testing & Linting**: Runs on every push and pull request to `main`.
-   - Validates Python syntax with `flake8`.
-   - Tests FastAPI application startup and endpoint dependencies.
-2. **Auto-Deployment to Render**:
-   - (Optional) In your Render Web Service settings, copy your **Deploy Hook URL**.
-   - Go to your GitHub Repository ➔ **Settings** ➔ **Secrets and variables** ➔ **Actions**.
-   - Add secret named `RENDER_DEPLOY_HOOK_URL`.
-   - Every time you push changes to `main`, GitHub Actions will test the code and trigger an instant deployment on Render.
-
----
-
-## 🛡️ Exception Handling & Production Reliability
-
-- **PDF Error Protection**: Validates headers (`%PDF-`), file size limits (50MB), and handles scanned or encrypted files cleanly.
-- **Deduplication Engine**: Uses SHA-256 file hashing to prevent duplicate uploads and redundant LLM token costs.
-- **Smart Quotas & Fallbacks**: Graceful rate limit notifications (`HTTP 429`) with guidance on setting a custom API key.
-- **Offline Resilience**: Detects network connectivity changes and alerts users via clean toast notifications.
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
+Frontend: Vanilla HTML5, Modern CSS3 Glassmorphism, FontAwesome 6, Lucide Icons (zero build step)
 
 ## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 💡 Acknowledgements
-- [Groq](https://groq.com/) for ultra-fast LPU inference.
-- [FastAPI](https://fastapi.tiangolo.com/) for high-performance Python backend architecture.
-- [ChromaDB](https://www.trychroma.com/) for lightweight, persistent vector embeddings.
-- [HuggingFace](https://huggingface.co/) for open-source embedding models.
+Distributed under the MIT License. Free for academic, personal, and commercial use.
