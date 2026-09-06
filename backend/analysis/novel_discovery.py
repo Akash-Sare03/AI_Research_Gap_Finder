@@ -238,7 +238,7 @@ Generate 5 distinct categories of 'New to the World' discoveries. Format STRICTL
         current_item = None
         
         def save_current_item():
-            nonlocal current_item, current_cat
+            nonlocal current_item
             if current_item and current_cat:
                 p = current_item.get('the_core_paradigm', '').strip()
                 w = current_item.get('why_it_is_new', '').strip()
