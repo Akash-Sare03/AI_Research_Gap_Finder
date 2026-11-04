@@ -1,0 +1,162 @@
+                       🗺️CODE EXPLORATION JOURNEY
+                       
+  STAGE 0: Entry Point & Config  ──►  STAGE 1: Ingestion (PDF -> Chunks)
+  (run_app.py, config.py)             (loader.py, splitter.py, processor.py)
+            │                                      │
+            ▼                                      ▼
+  STAGE 3: LLM & 5-Agent Brain   ◄──  STAGE 2: Vector DB & Hybrid Search
+  (llm.py, autonomous_engine.py)       (embeddings.py, chroma_store.py, hybrid.py)
+            │
+            ▼
+  STAGE 4: Central Orchestrator  ──►  STAGE 5: Frontend & User Interface
+  (research_service.py, main.py)      (index.html, app.js)
+
+
+🏁 STAGE 0: The Starting Point (Entry Point & Config)
+
+Start here to see how the server starts and where all global parameters live.
+
+1. run_app.py — The Application Entry Point
+What it does: This is the single command you run in the terminal (python run_app.py).
+Key lines to look at:
+sys.path.insert(0, ...): Ensures all backend imports work cleanly.
+uvicorn.run(app, host=..., port=...): Starts the asynchronous web server hosting FastAPI.
+Next step: Now check where the application gets its settings.
+2. backend/core/config.py — The Global Settings
+What it does: Reads environment variables from .env (Groq API Key, Chunk Size, Model Names).
+Key parameters to check:
+LLM_MODEL: qwen/qwen3.8-27b (default high-speed model).
+CHUNK_SIZE = 512 and CHUNK_OVERLAP = 50: The exact window size used for cutting text.
+HYBRID_WEIGHT_SEMANTIC = 0.7 and HYBRID_WEIGHT_KEYWORD = 0.3: The weights used for hybrid search.
+
+
+📄 STAGE 1: The Document Pipeline (PDF 
+→
+→ Clean Chunks)
+
+Understand how a physical PDF file is converted into searchable data chunks.
+
+3. backend/document/loader.py — The PDF Parser
+What it does: Opens the PDF file using pypdf, extracts page text, and computes a SHA-256 fingerprint.
+Key functions to inspect:
+load_pdf(file_path): Streams pages one-by-one with error handling.
+_infer_title(...): If the PDF metadata title is missing (or generic like "untitled"), it extracts the title from the first prominent line of Page 1.
+get_file_hash(...): Generates the SHA-256 hash to skip duplicate uploads.
+4. backend/document/splitter.py — The Text Chunking Engine
+What it does: Splits long page text into 512-token chunks with 50-token overlap.
+Key function:
+split_document(paper): Loops through each page and tags each piece with metadata (chunk_id, paper_id, page_number).
+5. backend/document/processor.py — The Pipeline Glue
+What it does: Takes the loaded paper, passes it through the splitter, and hands the chunks to the embedding service to prepare them for vector indexing.
+
+
+🧮 STAGE 2: Storage & Embeddings (The Semantic Search Brain)
+
+See how text is converted into numbers and how Hybrid Search works.
+
+6. backend/core/embeddings.py — The Embedding Engine
+What it does: Converts text strings into 384-dimensional numeric vectors using sentence-transformers/all-MiniLM-L6-v2.
+Key functions:
+model: Property that lazy-loads the model into memory only when first needed.
+embed_texts(texts): Vectorizes a batch of chunks with automatic normalization.
+_fallback_embed(text): Ultra-lightweight deterministic hash fallback if memory is constrained.
+7. backend/vectorstore/chroma_store.py — ChromaDB Vector Store
+What it does: Stores vectors, text chunks, and metadata in local SQLite/HNSW tables.
+Key functions:
+add_chunks(chunks): Upserts chunks in batches of 50.
+search(query_embedding, top_k=10): Performs cosine similarity search to find the closest chunks.
+get_all_papers_metadata(user_id): Enforces workspace isolation so users only see their own papers.
+8. backend/retrieval/hybrid.py — The Hybrid Search Engine
+What it does: Combines dense semantic vector search with sparse BM25 keyword search.
+Key function:
+retrieve(query, top_k): Runs _semantic_search (70% weight) and _keyword_search (30% weight) and fuses the scores so technical symbols (AdamW, Equation 4) and high-level ideas are both found accurately.
+
+
+🤖 STAGE 3: Intelligence & Multi-Agent Discovery
+
+See how the AI models, 5-agent debate, and academic analysis work.
+
+9. backend/core/llm.py — The LLM Connection
+What it does: Sets up ChatGroq with temperature controls (0.1 for factual RAG, 0.4 for creative discovery).
+10. backend/analysis/autonomous_discovery_engine.py — The 5-Agent Discovery Lab
+⭐ Most Important File for Multi-Agent AI:
+Look for:
+AgentDiscoveryState: The TypedDict data structure holding the debate state.
+agent_1_concept_mapper_node: Extracts the 4 foundational axioms.
+agent_2_idea_theorist_node: Formulates the breakthrough hypothesis.
+agent_3_peer_referee_node: Actively attacks the hypothesis with 3 failure points.
+agent_4_self_correction_node: Patches the vulnerabilities.
+agent_5_blueprint_node: Builds the 3-phase testing roadmap and calculates the Falsification Resistance Score.
+build_discovery_workflow(): Compiles the LangGraph StateGraph.
+11. backend/analysis/limitation_detector.py & gap_detector.py — Flaws & Gaps
+What they do:
+limitation_detector.py: Scans explicit author admissions (quotes + page numbers) and deduces inferred unstated limitations.
+gap_detector.py: Classifies research gaps into High, Medium, and Low priorities.
+12. backend/analysis/novel_discovery.py — 5 Novel Categories
+What it does: Categorizes discoveries into Paradigm Shifts, Cross-Domain Transfers, Hidden Flaws, Predictive Trends, and Unexplored Combinations.
+13. backend/analysis/external_researcher.py — Live Scholar Search
+What it does: Queries external scholarly repositories (arXiv, PubMed, IEEE) and performs semantic comparison against the uploaded paper.
+
+
+⚡ STAGE 4: Central Orchestration & API Layer
+
+See how all background pieces connect into clean REST endpoints.
+
+14. backend/services/research_service.py — The Master Brain
+What it does: The central service class called by the API.
+Key methods to inspect:
+process_and_ingest_pdf(...): Runs the full upload flow (SHA-256 check 
+→
+→ loader 
+→
+→ splitter 
+→
+→ embedder 
+→
+→ vectorstore).
+answer_question(...): Executes the 3-layer Q&A engine (checks SHA-256 cache 
+→
+→ Hybrid RAG 
+→
+→ prompt 
+→
+→ confidence score).
+run_autonomous_discovery(...): Triggers the 5-Agent LangGraph workflow.
+15. backend/core/auth.py — Sessions & 12 Guest Quotas
+What it does: Manages user registration/login, JWT session tokens, and tracks the 12 free guest trials.
+16. backend/api/main.py — The FastAPI Router
+What it does: Exposes the REST API endpoints:
+POST /api/upload: Handles PDF file uploads.
+POST /api/qa: Handles chat questions.
+GET /api/papers/{id}/autonomous-discovery: Triggers the 5-agent team.
+GET /api/papers/{id}/simplified-summary: Returns plain-English breakdown.
+
+
+🖥️ STAGE 5: The User Interface (Frontend)
+
+See how the browser interacts with the FastAPI backend.
+
+17. frontend/index.html — The HTML Layout
+What to look for: The 7 main <section class="tab-pane"> containers corresponding to the 7 workspaces.
+18. frontend/app.js — The Master Frontend Controller
+Key functions to inspect:
+uploadSinglePaper(file): Sends FormData to /api/upload with a multi-stage progress bar.
+sendChatMessage(query): Posts to /api/qa and renders the multi-step "thinking" bubble and confidence badges.
+renderAutonomousVisualDashboard(data): Renders the step-by-step 5-agent flowchart and interactive transcript modal.
+
+
+💡 Quick Summary Checklist to Test Your Knowledge
+
+After going through these files, ask yourself these 5 questions to test your understanding:
+
+When a user uploads a PDF, which 4 files process it before it lands in ChromaDB? (loader.py 
+→
+→ splitter.py 
+→
+→ embeddings.py 
+→
+→ chroma_store.py).
+How does hybrid.py balance vectors vs keywords? (70% Dense Cosine + 30% BM25).
+What is the role of Agent 3 (Peer Referee) in autonomous_discovery_engine.py? (Attacks Agent 2's hypothesis with 3 specific failure modes).
+How does research_service.py answer repeated questions in 8 milliseconds? (Uses SHA-256 disk cache lookup).
+Why is run_app.py built on Uvicorn & FastAPI? (Asynchronous non-blocking concurrency for multi-agent LLM calls).

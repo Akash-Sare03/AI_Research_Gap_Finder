@@ -5,6 +5,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![Groq API](https://img.shields.io/badge/Groq-Fast%20Inference-f55036.svg)](https://groq.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange.svg)](https://www.trychroma.com)
+[![Deploy on Render](https://img.shields.io/badge/Render-Live%20Deploy-46E3B7.svg)](https://render.com)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
 
 > **Bridge the known, discover the unknown.**  
 > ScrutinAI is an AI-powered academic research assistant and multi-agent scientific discovery platform. Upload any research paper (PDF) to instantly discover unexplored research gaps, detect hidden assumptions, chat with exact source citations, compare with online literature, and run an autonomous 5-agent scientific debate that formulates new breakthrough hypotheses.
@@ -58,88 +60,64 @@ flowchart TB
 ```
 
 ---
-    
-## 🔍 How the App Works (Simple Explanation)
 
- **1. Upload Your Paper**
-- Start by uploading any research paper in PDF format. The app reads the entire paper and splits it into small, meaningful chunks. Each chunk is - converted into a mathematical representation (called a vector) so the system can understand and search through the content intelligently.
+## 📖 Features in Detail
 
-**2. Ask Questions & Get Answers**
-- You can ask any question about the paper, like:
+**1. 5-Agent Autonomous Scientific Discovery**
+- Simulates an entire peer review panel and research lab using 5 collaborative AI agents:
+  - **Concept Mapper:** Maps core methods, assumptions, and domain taxonomy.
+  - **Idea Theorist:** Formulates speculative, high-impact hypotheses.
+  - **Peer Referee:** Ruthlessly audits for flaws, feasibility, and prior art.
+  - **Self-Correction Lead:** Iteratively resolves referee criticisms and tightens claims.
+  - **Blueprint Architect:** Synthesizes an experimental blueprint ready for execution.
 
-- "What are the limitations of this research?"
+**2. Academic Critique & Gap Finding**
+- Deeply inspects methodology, sample size, benchmark constraints, and algorithmic assumptions.
+- Extracts explicit quotes with page numbers and infers hidden vulnerabilities.
+- Prioritizes research opportunities by feasibility and impact (High / Medium / Low).
 
-- "What methodology was used?"
+**3. Grounded RAG Chat**
+- Uses **Hybrid Search (Vector Similarity + BM25 Keyword Search)** with Reciprocal Rank Fusion.
+- Cites exact paragraph quotes and page numbers for every answer.
+- Prevents hallucinations through strict context verification.
 
-- "What are the research gaps?"
+**4. Live Literature Comparison**
+- Searches live academic repositories (arXiv, PubMed, IEEE, Semantic Scholar).
+- Discovers state-of-the-art work published after or outside the paper's scope.
+- Pinpoints unexplored opportunities where literature has moved ahead.
 
-- The app searches through the paper, finds the most relevant sections, and gives you an answer with:
+**5. User Isolation & Authentication**
+- Secure session-based authentication with personal workspaces.
+- Isolated paper collections, vector embeddings, and search history per user.
+- Supports custom user Groq API keys and guest quota mode.
 
-- Confidence Score: Shows how confident the answer is (High/Medium/Low)
-
-- Page Citations: Exactly which page the information came from
-
-- Source Text: The actual quote from the paper
-
-**3. Discover Research Gaps & Limitations**
-- The app automatically finds:
-
-- Explicit Limitations – What the authors themselves admit (with direct quotes and page numbers)
-
-- Inferred Limitations – What the system logically deduces from the methodology, dataset, or experiments
-
-- Research Gaps – What's missing from the paper, categorized as High/Medium/Low priority
-
-- Actionable Improvements – Specific suggestions on what to change and why
-
-**4. 5-Agent Discovery (The AI Scientist Team)**
-- This is where the magic happens. The app creates a virtual team of 5 AI agents that work together:
-
-- Agent	Role
-- Concept Mapper	Reads the paper and extracts core concepts and ideas
-- Idea Theorist	Generates a completely new breakthrough idea
-- Peer Referee	Challenges the idea, finds flaws and edge cases
-- Self-Correction Lead	Fixes the flaws and strengthens the idea
-- Blueprint Lead	Creates a step-by-step testing roadmap
-- The result? A completely new discovery that is NOT mentioned anywhere in the original paper!
-
-**5. Live Literature Comparison**
-- The app searches online (arXiv, PubMed, IEEE, Semantic Scholar) for similar research papers. It shows you:
-
-- What similar papers exist
-
-- What they cover that your paper doesn't
-
-- How your paper compares to the broader research landscape
-
-**6. Export Reports**
-- Once you're done analyzing, you can download everything as:
-
-- PDF Report – A complete, well-formatted document
-
-- Markdown Report – For editing or sharing on platforms like GitHub
+**6. Multi-Format Report Export**
+- Download publication-grade executive summaries and gap analyses:
+  - **PDF Report** — Beautifully formatted with professional typography.
+  - **Markdown Report** — Ready for GitHub, Notion, or Obsidian.
 
 **7. Plain-English Summary**
-- If you're not a subject matter expert, the app can translate the entire analysis into simple, easy-to-understand language. Perfect for students, non-experts, or anyone who wants a quick overview.
+- Translates dense mathematical and academic jargon into plain English.
+- Breaks down complex papers for students, founders, and interdisciplinary researchers.
 
 **8. 'New to the World' Discoveries**
-- The system goes beyond what's in the paper and finds:
+- Formulates novel research opportunities beyond the paper:
+  - **Paradigm Shifts** — Unconventional framings.
+  - **Cross-Domain Transfers** — Applying ideas from other fields.
+  - **Structural Flaws** — Critical blind spots in existing frameworks.
 
-- Paradigm Shifts – Completely new ways to approach the problem
+---
 
-- Cross-Domain Connections – Applying ideas from one field to another
+## 🚀 Quick Start (Local Setup)
 
-- Hidden Flaws – Things the authors might have missed
-
-- Unexplored Combinations – Ideas that have never been combined before
-
-### 🚀 Quick Start (Local Setup)
-1. Clone the Repository
-bash
+### 1. Clone the Repository
+```bash
 git clone https://github.com/Akash-Sare03/AI_Research_Gap_Finder.git
 cd AI_Research_Gap_Finder
-2. Create Virtual Environment & Install Dependencies
 ```
+
+### 2. Create Virtual Environment & Install Dependencies
+```bash
 # Windows
 python -m venv venv
 .\venv\Scripts\Activate.ps1
@@ -150,35 +128,78 @@ source venv/bin/activate
 
 # Install requirements
 pip install -r requirements.txt
-3. Configure API Key
-Create a .env file from the example:
-
-cp .env.example .env     # On Windows: copy .env.example .env
-Add your free Groq API Key:
-
-env
-GROQ_API_KEY=gsk_your_groq_api_key_here
-LLM_MODEL=qwen/qwen3.8-27b
-4. Run the Application
-
-python run_app.py
-Open your browser at:
 ```
 
-💻 Web App: http://localhost:8000
+### 3. Configure API Key
+Create a `.env` file from the example:
+```bash
+cp .env.example .env     # On Windows: copy .env.example .env
+```
+Add your free Groq API Key:
+```env
+GROQ_API_KEY=gsk_your_groq_api_key_here
+LLM_MODEL=qwen/qwen3.8-27b
+```
 
-📖 Interactive API Docs: http://localhost:8000/docs
+### 4. Run the Application
+```bash
+python run_app.py
+```
+Open your browser at:
+- 💻 **Web App:** [http://localhost:8000](http://localhost:8000)
+- 📖 **Interactive API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 🌐 Free Cloud Deployment
+
+### Option 1: Deploy on Vercel (Free 1-Click / GitHub Import)
+
+This repository includes a production-ready `vercel.json` and serverless entrypoint `api/index.py`.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
+
+**Steps to Deploy on Vercel:**
+1. Push your code to your GitHub repository.
+2. Go to **[vercel.com/new](https://vercel.com/new)** and click **Import** next to `AI_Research_Gap_Finder`.
+3. Under **Environment Variables**, add:
+   - `GROQ_API_KEY`: Your free Groq API key (from [console.groq.com](https://console.groq.com))
+   - `LLM_MODEL`: `qwen/qwen3.8-27b` (or preferred model)
+   - `VERCEL_SUPPORT_LARGE_FUNCTIONS`: `1`
+4. Click **Deploy**. Vercel will build and provision your app with a free global HTTPS `.vercel.app` URL!
+
+### Option 2: Deploy on Render (Free Blueprint)
+
+Deploy using the included `render.yaml` specification:
+1. Push to GitHub.
+2. In the **[Render Dashboard](https://dashboard.render.com/)**, select **New +** > **Blueprint**.
+3. Select your repository. Render will automatically read `render.yaml`, install dependencies, and launch `python run_app.py`.
+4. Enter your `GROQ_API_KEY` in the Render environment variables tab.
+
+---
+
+## 🔄 Automated CI/CD Pipeline
+
+Every push and pull request to `main` automatically triggers the GitHub Actions workflow (`.github/workflows/ci-cd.yml`):
+- **Code Checkout:** Checks out branch on Ubuntu runner.
+- **Python Setup:** Sets up Python 3.11 with pip caching.
+- **Flake8 Linting:** Validates syntax, prevents undefined variables, and enforces code standards across `backend`, `api`, and `tests`.
+- **Smoke Tests:** Automatically runs `tests/test_smoke.py` verifying config defaults, FastAPI routes, Vercel serverless entrypoint, `/api/health`, and citation extraction.
+- **Zero-Downtime Deployment:** Automatically pings Render deploy hook (if `RENDER_DEPLOY_HOOK_URL` secret is configured).
+
+---
 
 ## 🛠️ Tech Stack
-Backend: FastAPI, Uvicorn, LangChain, LangGraph, Pydantic
 
-Inference & AI: Groq API (qwen/qwen3.8-27b, openai/gpt-oss-120b)
+- **Backend:** FastAPI, Uvicorn, LangChain, LangGraph, Pydantic, Python-Multipart
+- **Inference & AI:** Groq API (`qwen/qwen3.8-27b`, `openai/gpt-oss-120b`)
+- **Embeddings & Search:** HuggingFace `sentence-transformers/all-MiniLM-L6-v2`, ChromaDB, BM25Okapi
+- **PDF & Export:** PyPDF, PDFPlumber, ReportLab (with clean typography sanitization)
+- **Frontend:** Vanilla HTML5, Modern CSS3 Glassmorphism, FontAwesome 6, Lucide Icons (zero build step)
+- **Deployment:** Vercel (Edge CDN + Serverless Functions), Render (Containerized Web Service), GitHub Actions (CI/CD)
 
-Embeddings & Search: HuggingFace sentence-transformers/all-MiniLM-L6-v2, ChromaDB, BM25Okapi
-
-PDF & Export: PyPDF, ReportLab (with clean typography sanitization)
-
-Frontend: Vanilla HTML5, Modern CSS3 Glassmorphism, FontAwesome 6, Lucide Icons (zero build step)
+---
 
 ## 📜 License
+
 Distributed under the MIT License. Free for academic, personal, and commercial use.

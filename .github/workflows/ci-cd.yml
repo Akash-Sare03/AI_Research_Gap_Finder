@@ -31,18 +31,28 @@ jobs:
       - name: Lint with Flake8 (Syntax & Error check)
         run: |
           # Stop build if there are Python syntax errors or undefined names
-          flake8 backend --count --select=E9,F63,F7,F82 --show-source --statistics
-          # Exit-zero treats all other errors as warnings
-          flake8 backend --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
+          flake8 backend api tests --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all other non-critical styling warnings
+          flake8 backend api tests --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
 
-      - name: Run Backend App Health Verification
+      - name: Run Backend App & Vercel Entrypoint Verification
         env:
           GROQ_API_KEY: "mock_test_key_for_ci_build"
           LLM_MODEL: "qwen/qwen3.8-27b"
           ANONYMIZED_TELEMETRY: "False"
           TOKENIZERS_PARALLELISM: "false"
         run: |
-          python -c "from backend.api.main import app; print('FastAPI application initialized successfully for CI/CD!')"
+          python -c "from backend.api.main import app; print('FastAPI main application initialized successfully!')"
+          python -c "from api.index import app; print('Vercel serverless entrypoint initialized successfully!')"
+
+      - name: Execute Automated Smoke & Health Test Suite
+        env:
+          GROQ_API_KEY: "mock_test_key_for_ci_build"
+          LLM_MODEL: "qwen/qwen3.8-27b"
+          ANONYMIZED_TELEMETRY: "False"
+          TOKENIZERS_PARALLELISM: "false"
+        run: |
+          python tests/test_smoke.py
 
   deploy-to-render:
     name: Trigger Render Deployment

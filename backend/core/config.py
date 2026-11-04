@@ -34,12 +34,16 @@ class Config:
     # Base Project Directory
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
+    # Serverless Environment Detection (e.g. Vercel)
+    IS_SERVERLESS: bool = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+    
     # Chroma DB
-    VECTOR_DB_PATH: str = os.getenv("VECTOR_DB_PATH", os.path.join(BASE_DIR, "data", "vectorstore"))
+    VECTOR_DB_PATH: str = os.getenv("VECTOR_DB_PATH", "/tmp/vectorstore" if IS_SERVERLESS else os.path.join(BASE_DIR, "data", "vectorstore"))
     
     # Data Directory
-    DATA_DIR: str = os.getenv("DATA_DIR", os.path.join(BASE_DIR, "data"))
-    UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", os.path.join(BASE_DIR, "data", "uploaded_papers"))
+    DATA_DIR: str = os.getenv("DATA_DIR", "/tmp/data" if IS_SERVERLESS else os.path.join(BASE_DIR, "data"))
+    UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "/tmp/uploaded_papers" if IS_SERVERLESS else os.path.join(BASE_DIR, "data", "uploaded_papers"))
+    CACHE_DIR: str = os.getenv("CACHE_DIR", "/tmp/cache" if IS_SERVERLESS else os.path.join(BASE_DIR, "backend", "cache"))
     
     # Authentication & Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "academic-research-gap-finder-secret-key-2026-super-secure-token")

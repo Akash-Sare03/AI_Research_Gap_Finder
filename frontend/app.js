@@ -1,6 +1,6 @@
 // frontend/app.js - Professional Academic Research Assistant Controller
 
-const API_BASE = window.location.origin;
+const API_BASE = window.__CUSTOM_API_BASE__ || localStorage.getItem("rgf_backend_url") || window.location.origin;
 
 // Application State & Per-Paper Cache
 const state = {

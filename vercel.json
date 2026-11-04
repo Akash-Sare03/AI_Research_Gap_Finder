@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/docs",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/",
+      "destination": "/frontend/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "ANONYMIZED_TELEMETRY": "False",
+    "TOKENIZERS_PARALLELISM": "false",
+    "VERCEL_SUPPORT_LARGE_FUNCTIONS": "1"
+  }
+}

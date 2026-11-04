@@ -62,7 +62,7 @@ class ResearchService:
         Path(self.upload_dir).mkdir(parents=True, exist_ok=True)
         
         # Persistent Disk Cache Directory
-        self.cache_dir = Path("backend/cache")
+        self.cache_dir = Path(Config.CACHE_DIR)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         
         # In-Memory Fast Cache Dictionaries
