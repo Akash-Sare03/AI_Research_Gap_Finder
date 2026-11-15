@@ -5,8 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![Groq API](https://img.shields.io/badge/Groq-Fast%20Inference-f55036.svg)](https://groq.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange.svg)](https://www.trychroma.com)
-[![Deploy on Render](https://img.shields.io/badge/Render-Live%20Deploy-46E3B7.svg)](https://render.com)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
+[![Live Vercel Demo](https://ai-research-gap-finder-wine.vercel.app/)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
 
 > **Bridge the known, discover the unknown.**  
 > ScrutinAI is an AI-powered academic research assistant and multi-agent scientific discovery platform. Upload any research paper (PDF) to instantly discover unexplored research gaps, detect hidden assumptions, chat with exact source citations, compare with online literature, and run an autonomous 5-agent scientific debate that formulates new breakthrough hypotheses.
@@ -149,32 +148,6 @@ Open your browser at:
 - 💻 **Web App:** [http://localhost:8000](http://localhost:8000)
 - 📖 **Interactive API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
----
-
-## 🌐 Free Cloud Deployment
-
-### Option 1: Deploy on Vercel (Free 1-Click / GitHub Import)
-
-This repository includes a production-ready `vercel.json` and serverless entrypoint `api/index.py`.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
-
-**Steps to Deploy on Vercel:**
-1. Push your code to your GitHub repository.
-2. Go to **[vercel.com/new](https://vercel.com/new)** and click **Import** next to `AI_Research_Gap_Finder`.
-3. Under **Environment Variables**, add:
-   - `GROQ_API_KEY`: Your free Groq API key (from [console.groq.com](https://console.groq.com))
-   - `LLM_MODEL`: `qwen/qwen3.8-27b` (or preferred model)
-   - `VERCEL_SUPPORT_LARGE_FUNCTIONS`: `1`
-4. Click **Deploy**. Vercel will build and provision your app with a free global HTTPS `.vercel.app` URL!
-
-### Option 2: Deploy on Render (Free Blueprint)
-
-Deploy using the included `render.yaml` specification:
-1. Push to GitHub.
-2. In the **[Render Dashboard](https://dashboard.render.com/)**, select **New +** > **Blueprint**.
-3. Select your repository. Render will automatically read `render.yaml`, install dependencies, and launch `python run_app.py`.
-4. Enter your `GROQ_API_KEY` in the Render environment variables tab.
 
 ---
 
