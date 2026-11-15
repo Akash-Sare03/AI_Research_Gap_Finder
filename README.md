@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
 [![Groq API](https://img.shields.io/badge/Groq-Fast%20Inference-f55036.svg)](https://groq.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange.svg)](https://www.trychroma.com)
-[![Live Vercel Demo](https://ai-research-gap-finder-wine.vercel.app/)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAkash-Sare03%2FAI_Research_Gap_Finder&env=GROQ_API_KEY,LLM_MODEL,VERCEL_SUPPORT_LARGE_FUNCTIONS)
+[![Live Vercel Demo](https://shields.io)](https://ai-research-gap-finder-wine.vercel.app/)
 
 > **Bridge the known, discover the unknown.**  
 > ScrutinAI is an AI-powered academic research assistant and multi-agent scientific discovery platform. Upload any research paper (PDF) to instantly discover unexplored research gaps, detect hidden assumptions, chat with exact source citations, compare with online literature, and run an autonomous 5-agent scientific debate that formulates new breakthrough hypotheses.
